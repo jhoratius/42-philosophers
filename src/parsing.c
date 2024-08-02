@@ -6,22 +6,27 @@
 /*   By: jhoratiu <jhoratiu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 18:34:50 by jhoratiu          #+#    #+#             */
-/*   Updated: 2024/07/16 17:26:24 by jhoratiu         ###   ########.fr       */
+/*   Updated: 2024/08/02 18:34:30 by jhoratiu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-int	*parsing(char **av)
+int	*parsing(int ac, char **av)
 {
 	int	i;
-	int	tab[ft_count_av(av)];
+	int	*tab;
 
 	i = 1;
-	while (av[i] != NULL)
+	tab = malloc((ac) * sizeof(int));
+	if (!tab)
+		return (NULL);
+	while (av[i])
 	{
-		if(ft_atoi2(av[i], tab[i]) == false)
+		printf("av[i] : %s\n", av[i]);
+		if(ft_atoi2(av[i], &tab[i]) == false)
 			return (NULL);
+		i++;
 	}
 	// check first argument (av[1]) so that it's a number
 	// [number of philosophers]

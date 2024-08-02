@@ -1,7 +1,7 @@
-NAME = philosophers
+NAME =		philosophers
 
 CC 			= cc
-CFLAGS 		= -Wall -Wextra
+CFLAGS 		= -Wall -Wextra -g3
 RM 			= rm -f
 EXTS 	=	.c
 
@@ -9,8 +9,10 @@ MAIN	= src/
 
 GNLPRE		= get_next_line/
 
-FILES	=	main				\
-			parsing 			\
+FILES		=	free				\
+				main				\
+				parsing 			\
+				utils				\
 
 GNLFILES	=	get_next_line 		\
 				get_next_line_utils \
@@ -21,23 +23,20 @@ SRCS	= $(addsuffix ${EXTS}, \
 
 OBJS	= $(SRCS:.c=.o)
 
-MANDATORY_BUILT = .mandatory_built
-
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJS)
-	touch $(MANDATORY_BUILT)
+	$(CC) $(CFLAGS) -pthread -o $(NAME) $(OBJS) 
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) $(NAME) $(OBJS) $(MANDATORY_BUILT)
+	$(RM) $(NAME) $(OBJS)
 
 fclean: clean
 	$(RM) $(NAME)
 
-re: clean all
+re: fclean all
 
 .PHONY: all clean fclean re
