@@ -6,7 +6,7 @@
 /*   By: jhoratiu <jhoratiu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 18:34:50 by jhoratiu          #+#    #+#             */
-/*   Updated: 2024/08/02 18:34:30 by jhoratiu         ###   ########.fr       */
+/*   Updated: 2024/08/04 12:05:51 by jhoratiu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	*parsing(int ac, char **av)
 		return (NULL);
 	while (av[i])
 	{
-		printf("av[i] : %s\n", av[i]);
+		// printf("av[i] : %s\n", av[i]);
 		if(ft_atoi2(av[i], &tab[i]) == false)
 			return (NULL);
 		i++;
