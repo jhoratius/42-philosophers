@@ -14,22 +14,27 @@ FILES		=	free				\
 				parsing 			\
 				utils				\
 
+PHILO_FILES	=	philosophes			\
+
 GNLFILES	=	get_next_line 		\
 				get_next_line_utils \
 
-SRCS	= $(addsuffix ${EXTS}, \
-			$(addprefix ${MAIN}, $(FILES)) \
-			)
+SRCS_MAIN	= $(addsuffix ${EXTS}, src/$(FILES))
+SCRS_PHILO	= $(addsuffix ${EXTS}, routine/$(PHILO_FILES))
+
+SRCS = $(SRCS_MAIN) $(SCRS_PHILO)
 
 OBJS	= $(SRCS:.c=.o)
 
+vpath %.c src routine
+
 all: $(NAME)
 
-$(NAME): $(OBJS)
-	$(CC) $(CFLAGS) -pthread -o $(NAME) $(OBJS) 
+$(NAME): $(OBJS) includes/philosophers.h
+	$(CC) $(CFLAGS) -pthread -Iincludes -o $(NAME) $(OBJS) 
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+%.o: %.c includes/philosophers.h
+	$(CC) $(CFLAGS) -Iincludes -c $< -o $@
 
 clean:
 	$(RM) $(NAME) $(OBJS)
