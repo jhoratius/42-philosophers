@@ -6,7 +6,7 @@
 /*   By: jhoratiu <jhoratiu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 18:27:59 by jhoratiu          #+#    #+#             */
-/*   Updated: 2024/08/07 16:34:09 by jhoratiu         ###   ########.fr       */
+/*   Updated: 2024/08/20 18:28:20 by jhoratiu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,32 +24,39 @@
 # include <sys/wait.h>
 # include <sys/time.h>
 
+typedef struct s_meal_table t_meal_table;
+
 typedef struct s_philo
 {
-	int			id;
-	float		time_to_eat;
-	float		time_to_sleep;
-	float		time_to_die;
-	bool		fork;
-	bool		is_dead;
-	pthread_t	thread;
+	int						id;
+	int						time_to_eat;
+	bool					is_dead;
+	int						nb_eat_times;
+	pthread_t				thread;
+	t_meal_table			*table;
 }				t_philo;
 
 typedef struct s_meal_table
 {
-	t_philo			*philosophes;
-	int				n_philosophes;
-	float			eat_limit;
-	float			sleep_limit;
-	float			die_limit;
-	int				n_times_to_eat_each;
-	pthread_mutex_t	*forks;
-	pthread_mutex_t	print_lock;
+	t_philo					*philosophes;
+	int						n_philosophes;
+	int						eat_limit;
+	int						sleep_limit;
+	int						die_limit;
+	int						n_times_to_eat_each;
+	unsigned long			start_time;
+	pthread_mutex_t			*forks;
+	pthread_mutex_t			print_lock;
+
 }				t_meal_table;
 
 // routine
 	// philosophes
-	void	philosopher_is_eating(t_meal_table *table, t_philo *philo);
+	int		philosopher_is_eating(t_meal_table *table, t_philo *philo);
+	int		philosopher_is_sleeping(t_meal_table *table, t_philo *philo);
+	int		philosopher_is_thinking(t_meal_table *table, t_philo *philo);
+	bool	philosopher_is_dead(t_meal_table *table, t_philo *philo);
+	unsigned long	get_time();
 
 // src
 	// parsing

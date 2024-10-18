@@ -14,6 +14,7 @@
 
 void	ft_free_struct(t_meal_table *table)
 {
+	(void)table;
 	// if (table != NULL)
 	// {
 	// 	if (table->n_philosophes)

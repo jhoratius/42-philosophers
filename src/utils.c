@@ -40,28 +40,28 @@ int	ft_atoi(const char *nptr)
 bool	ft_atoi2(const char *nptr, int *n)
 {
 	int		i;
-	long	signe;
+	long	sign;
 	long	j;
 
 	i = 0;
-	signe = 1;
+	sign = 1;
 	j = 0;
 	while ((nptr[i] >= 9 && nptr[i] <= 13) || nptr[i] == 32)
 		i++;
-	signe = ft_check_sign(nptr[i], &i);
-	if (signe != 1 && signe != -1)
+	sign = ft_check_sign(nptr[i], &i);
+	if (sign != 1 && sign != -1)
 		return (false);
 	while (nptr[i] && (nptr[i] >= 48 && nptr[i] <= 57))
 	{
-		if (((signe > 0 && (j * 10 + nptr[i] - 48) > INT_MAX))
-			|| ((signe < 0 && (j * 10 + nptr[i] - 48) * signe < INT_MIN)))
-			return (write(2, "Error\n", 6), false);
+		if (((sign > 0 && (j * 10 + nptr[i] - 48) > INT_MAX))
+			|| ((sign < 0 && (j * 10 + nptr[i] - 48) * sign < INT_MIN)))
+			return (write(2, "Error : Argument overflow\n", 27), false);
 		j = j * 10 + nptr[i] - 48;
 		i += 1;
 	}
 	if (nptr[i] && (!(nptr[i] == '\0')))
 		return (write(2, "Error\n", 6), false);
-	*n = j * signe;
+	*n = j * sign;
 	return (true);
 }
 
