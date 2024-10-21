@@ -29,7 +29,7 @@ typedef struct s_meal_table t_meal_table;
 typedef struct s_philo
 {
 	int						id;
-	int						time_to_eat;
+	unsigned long			time_to_eat;
 	bool					is_dead;
 	int						nb_eat_times;
 	pthread_t				thread;
@@ -40,9 +40,9 @@ typedef struct s_meal_table
 {
 	t_philo					*philosophes;
 	int						n_philosophes;
-	int						eat_limit;
-	int						sleep_limit;
-	int						die_limit;
+	unsigned long			eat_limit;
+	unsigned long			sleep_limit;
+	unsigned long			die_limit;
 	int						n_times_to_eat_each;
 	unsigned long			start_time;
 	pthread_mutex_t			*forks;
@@ -56,6 +56,7 @@ typedef struct s_meal_table
 	int		philosopher_is_sleeping(t_meal_table *table, t_philo *philo);
 	int		philosopher_is_thinking(t_meal_table *table, t_philo *philo);
 	bool	philosopher_is_dead(t_meal_table *table, t_philo *philo);
+	void	lock_and_print(t_meal_table *table, t_philo *philo, char *str);
 	unsigned long	get_time();
 
 // src
@@ -64,7 +65,8 @@ typedef struct s_meal_table
 	int			ft_count_av(char **av);
 
 	// main
-	void		*ft_routine(void *arg);
+	void		*ft_routine(t_philo *philo);
+	int			all_philo_died(t_meal_table *table);
 	bool		ft_append_infos_table(t_meal_table *table, char **av);
 	int			init_philosophes(t_meal_table *table);
 

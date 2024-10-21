@@ -38,41 +38,91 @@ int	main(int ac, char** av)
 	table.forks = malloc(table.n_philosophes * sizeof(pthread_mutex_t));
 	if (!table.forks)
 		return (free(table.philosophes), 1);
+	// pthread_mutex_init(&table.print_lock, NULL);
 	init_philosophes(&table);
-	pthread_mutex_init(&table.print_lock, NULL);
-	// free structure at the end
+	if (all_philo_died(&table) == 1)
+		printf("All philosophers are done eating !\n");
 	ft_free_struct(&table);
 	return (0);
 }
 
-void	*ft_routine(void *arg)
+int	all_philo_died(t_meal_table *table)
 {
-	t_philo			*philo;
-	t_meal_table	*table;
-	int				i;
+	(void)table;
+	// int	i;
 
-	philo = (t_philo *)(arg);
-	table = philo->table;
+	// i = 1;
+	// while (i < table->n_philosophes)
+	// {
+		// if (table->philosophes[i] != NULL)
+		// {
+		// fprintf(stderr, "aaa\n");
+		// fprintf(stderr, "Checking philosopher %d\n", i);
+		// if (table->philosophes[i].is_dead == true)
+		// 	return (0);
+		// }
+	// 	i++;
+	// }
+	return (1);
+}
+
+int	init_philosophes(t_meal_table *table)
+{
+	int	i;
+
+	if (!table)
+		return (1);
+	i = -1;
+	while(++i < table->n_philosophes)
+	{
+		table->philosophes[i].id = i + 1;
+		table->philosophes[i].is_dead = false;
+		table->philosophes[i].nb_eat_times = 0;
+		table->philosophes[i].table = table;
+		table->philosophes[i].time_to_eat = 0;
+		pthread_mutex_init(&table->forks[i], NULL);
+	}
+	pthread_mutex_init(&table->print_lock, NULL);
+	table->start_time = get_time();
+	i = -1;
+	while (++i < table->n_philosophes)
+	{
+		if(pthread_create(&table->philosophes[i].thread, NULL, 
+			(void *)ft_routine, &table->philosophes[i]) != 0)
+			return (printf("failed to create\n"), 1);
+	}
+	i = -1;
+	while (++i < table->n_philosophes)
+		if (pthread_join(table->philosophes[i].thread, NULL) != 0)
+			return (printf("failed to join\n"), 1);
+	free(table->philosophes);
+	free(table->forks);
+	return (0);
+}
+
+void	*ft_routine(t_philo *philo)
+{
+	int	i;
+
+	i = 0;
 	if (philo->id % 2 == 1)
 		sleep(1);
-	i = 0;
 	while (1)
 	{
-		if (philosopher_is_eating(table, philo) == 1)
-			return (NULL);
-		if (philosopher_is_sleeping(table, philo) == 1)
-			return (NULL);
-		if (philosopher_is_thinking(table, philo) == 1)
-			return (NULL);
-		if (table->n_times_to_eat_each != -1 && i >= table->n_times_to_eat_each)
-		{
-			printf("Philosopher %d has the belly full\n", philo->id);
+		if (philo->table->n_times_to_eat_each != -1 
+			&& i > (philo->table->n_times_to_eat_each - 1))
 			break ;
-		}
+		if (philosopher_is_eating(philo->table, philo) == 1)
+			return (NULL);
+		if (philosopher_is_sleeping(philo->table, philo) == 1)
+			return (NULL);
+		if (philosopher_is_thinking(philo->table, philo) == 1)
+			return (NULL);
 		i++;
 	}
 	return (NULL);
 }
+
 
 bool	ft_append_infos_table(t_meal_table *table, char **av)
 {
@@ -113,43 +163,4 @@ bool	ft_append_infos_table(t_meal_table *table, char **av)
 	if (table->n_times_to_eat_each == 0)
 		return (printf("no n times to eat each\n"), false);
 	return (true);
-}
-
-int	init_philosophes(t_meal_table *table)
-{
-	int	i;
-
-	if (!table)
-		return (1);
-	i = -1;
-	while(++i < table->n_philosophes)
-	{
-		table->philosophes[i].id = i + 1;
-		table->philosophes[i].is_dead = false;
-		table->philosophes[i].nb_eat_times = 0;
-		table->philosophes[i].table = table;
-		pthread_mutex_init(&table->forks[i], NULL);
-	}
-
-	pthread_mutex_init(&table->print_lock, NULL);
-	i = -1;
-	table->start_time = get_time();
-	// printf("table start time: %zu\n", table->start_time);
-	while (++i < table->n_philosophes)
-	{
-		// fprintf(stderr, "i:%d\n", i);
-		if(pthread_create(&table->philosophes[i].thread, NULL, ft_routine, (void *)&table->philosophes[i]) != 0)
-			printf("failed to create\n");
-	}
-	i = -1;
-	while (++i < table->n_philosophes)
-		if (pthread_join(table->philosophes[i].thread, NULL) != 0)
-			printf("failed to join\n");
-	i = -1;
-	while (++i < table->n_philosophes)
-		if (pthread_mutex_destroy(&table->forks[i]) != 0)
-			printf("failed to destroy\n");
-	free(table->philosophes);
-    free(table->forks);
-	return (0);
 }
