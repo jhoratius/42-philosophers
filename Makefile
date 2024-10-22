@@ -33,7 +33,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS) includes/philosophers.h
 	@$(CC) $(CFLAGS) $(DFLAGS) -pthread -Iincludes -o $(NAME) $(OBJS)
-	@echo "$(GREEN)Done compiling.$(RESET)$(NC)"
+	@echo "Done compiling."
 
 $(OBJDIR)%.o: %.c includes/philosophers.h
 	@mkdir -p $(OBJDIR)
@@ -42,11 +42,11 @@ $(OBJDIR)%.o: %.c includes/philosophers.h
 clean:
 	@$(RM) $(OBJS)
 	@$(RM) -r $(OBJDIR)
-	@echo "$(BLUE)Cleaned files.$(RESET)$(NC)"
+	@echo "Cleaned files."
 
 fclean: clean
 	@$(RM) $(NAME)
-	@echo "$(BLUE)Cleaned executable.$(RESET)$(NC)"
+	@echo "Cleaned executable."
 
 re: fclean all
 

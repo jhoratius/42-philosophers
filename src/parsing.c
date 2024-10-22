@@ -27,20 +27,6 @@ int	*parsing(int ac, char **av)
 			return (NULL);
 		i++;
 	}
-	// check first argument (av[1]) so that it's a number
-	// [number of philosophers]
-
-	// check the second argument (av[2]), so that it's a number in milliseconds
-	// [time to die]
-
-	// check the third argument (av[3]), so that it's a number in milliseconds
-	// [time to eat]
-
-	// check the fourth argument (av[4]), so that it's a number in milliseconds
-	// [time to sleep]
-
-	// check the fifth and last argument (av[5]), so that it's a number
-	// [number of time each philosopher must eat]
 	return (tab);
 }
 
