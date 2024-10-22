@@ -125,28 +125,28 @@ bool	ft_append_infos_table(t_meal_table *table, char **av)
 	table->n_philosophes = ft_atoi(av[1]);
 	if (table->n_philosophes == 0)
 		return (printf("no philosophers\n"), false);
-	printf("table->n_philosophes : %d\n", table->n_philosophes);
+	//printf("table->n_philosophes : %d\n", table->n_philosophes);
 
 	// Die limit time in milliseconds
 	table->die_limit = ft_atoi(av[2]);
 	if (table->die_limit == 0)
 		return (printf("no die limit\n"), false);
-	printf("table->die_limit : %ld\n", table->die_limit);
+	//printf("table->die_limit : %ld\n", table->die_limit);
 
 	// Eat limit time
 	table->eat_limit = ft_atoi(av[3]);
 	if (table->eat_limit == 0)
 		return (printf("no eat limit\n"), false);
-	printf("table->eat_limit : %ld\n", table->eat_limit);
+	//printf("table->eat_limit : %ld\n", table->eat_limit);
 
 	// Sleep limit time
 	table->sleep_limit = ft_atoi(av[4]);
 	if (table->sleep_limit == 0)
 		return (printf("no sleep limit\n"), false);
-	printf("table->sleep_limit : %ld\n", table->sleep_limit);
+	//printf("table->sleep_limit : %ld\n", table->sleep_limit);
 
 	// If last parameter, number of times to eat each
-	printf("table->n_times_to_eat_each : %d\n", table->n_times_to_eat_each);
+	//printf("table->n_times_to_eat_each : %d\n", table->n_times_to_eat_each);
 	if (!av[5])
 	{
 		table->n_times_to_eat_each = -1;
