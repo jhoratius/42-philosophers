@@ -14,6 +14,8 @@
 
 void	lock_and_print(t_meal_table *table, t_philo *philo, char *str)
 {
+	if (check_philo_died(table) == 0 && ft_strcmp(str, "died\n"))
+		return ;
 	pthread_mutex_lock(&table->print_lock);
 	printf("%zu %d %s", get_time() - table->start_time, philo->id, str);
 	pthread_mutex_unlock(&table->print_lock);
@@ -31,15 +33,15 @@ int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
 	L_fork = philo->id - 1;
 	R_fork = (philo->id) % table->n_philosophes;
 
-	// fprintf(stderr, "L_fork:%d\n", L_fork);
-	// fprintf(stderr, "R_fork:%d\n", R_fork);
-
 	if (philo->time_to_eat == 0)
 		philo->time_to_eat = get_time();
 	if (L_fork < 0 || L_fork >= table->n_philosophes
 		|| R_fork < 0 || R_fork >= table->n_philosophes)
 			return (lock_and_print(table, philo, "err: Fork ID out of bounds"), 1);
 
+	pthread_mutex_lock(&table->print_lock);
+	printf("%zu %d time to eat: %lu\n", get_time() - table->start_time, philo->id, get_time() - philo->time_to_eat);
+	pthread_mutex_unlock(&table->print_lock);
 	if (philo->nb_eat_times != 0
 		&& get_time() - philo->time_to_eat > table->eat_limit)
 		return (philo->is_dead = true,
@@ -49,8 +51,8 @@ int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
 	if (philo->nb_eat_times != 0 
 		&& get_time() - philo->time_to_eat > table->eat_limit)
 		return (philo->is_dead = true,
-			lock_and_print(table, philo, "has died\n"), 1);
-// fprintf(stderr, "2\n");
+			lock_and_print(table, philo, "died\n"), 1);
+
 	pthread_mutex_lock(&table->forks[L_fork]);
 	lock_and_print(table, philo, "has taken a fork\n");
 
@@ -84,9 +86,7 @@ int	philosopher_is_sleeping(t_meal_table *table, t_philo *philo)
 	// 	return (1);
 	// }
 
-	// pthread_mutex_lock(&table->print_lock);
-	// printf("Philosopher %d is sleeping\n", philo->id);
-	// pthread_mutex_unlock(&table->print_lock);
+	
 	lock_and_print(table, philo, "is sleeping\n");
 	usleep(table->sleep_limit * 1000);
 	return (0);
@@ -107,6 +107,8 @@ int	philosopher_is_thinking(t_meal_table *table, t_philo *philo)
 	// 	return (1);
 	// }
 
+	if (check_philo_died(table) == 0)
+		return (1);
 	lock_and_print(table, philo, "is thinking\n");
 	// pthread_mutex_lock(&table->print_lock);
 	// printf("Philosopher %d is thinking\n", philo->id);

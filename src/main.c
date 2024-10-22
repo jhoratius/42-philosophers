@@ -38,13 +38,13 @@ int	main(int ac, char** av)
 	// pthread_mutex_init(&table.print_lock, NULL);
 	init_philosophes(&table);
 	
-	if (all_philo_died(&table) == 1)
+	if (check_philo_died(&table) == 1)
 		printf("All philosophers are done eating !\n");
 	ft_free_struct(&table);
 	return (0);
 }
 
-int	all_philo_died(t_meal_table *table)
+int	check_philo_died(t_meal_table *table)
 {
 	(void)table;
 	int	i;
@@ -102,15 +102,17 @@ void	*ft_routine(t_philo *philo)
 		usleep(philo->time_to_eat / 2);
 	while (1)
 	{
+		if (check_philo_died(philo->table) == 0)
+			break ;
 		if (philo->table->n_times_to_eat_each != -1
 			&& i > (philo->table->n_times_to_eat_each - 1))
 			break ;
 		if (philosopher_is_eating(philo->table, philo) == 1)
-			return (NULL);
+			break ;
 		if (philosopher_is_sleeping(philo->table, philo) == 1)
-			return (NULL);
+			break ;
 		if (philosopher_is_thinking(philo->table, philo) == 1)
-			return (NULL);
+			break ;
 		i++;
 	}
 	return (NULL);

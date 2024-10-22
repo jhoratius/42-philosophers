@@ -67,7 +67,7 @@ typedef struct s_meal_table
 
 	// main
 	void		*ft_routine(t_philo *philo);
-	int			all_philo_died(t_meal_table *table);
+	int			check_philo_died(t_meal_table *table);
 	bool		ft_append_infos_table(t_meal_table *table, char **av);
 	int			init_philosophes(t_meal_table *table);
 
@@ -78,5 +78,6 @@ typedef struct s_meal_table
 	int			ft_atoi(const char *nptr);
 	bool		ft_atoi2(const char *nptr, int *n);
 	long		ft_check_sign(char c, int *i);
+	int			ft_strcmp(char *s1, char *s2);
 
 # endif
