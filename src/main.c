@@ -35,6 +35,7 @@ int	main(int ac, char** av)
 	table.forks = malloc(table.n_philosophes * sizeof(pthread_mutex_t));
 	if (!table.forks)
 		return (free(table.philosophes), 1);
+	// pthread_mutex_init(&table.print_lock, NULL);
 	init_philosophes(&table);
 	
 	if (all_philo_died(&table) == 1)

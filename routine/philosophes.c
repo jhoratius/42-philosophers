@@ -45,6 +45,12 @@ int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
 		return (philo->is_dead = true,
 			lock_and_print(table, philo, "died\n"), 1);
 
+	philo->time_to_eat = get_time();
+	if (philo->nb_eat_times != 0 
+		&& get_time() - philo->time_to_eat > table->eat_limit)
+		return (philo->is_dead = true,
+			lock_and_print(table, philo, "has died\n"), 1);
+// fprintf(stderr, "2\n");
 	pthread_mutex_lock(&table->forks[L_fork]);
 	lock_and_print(table, philo, "has taken a fork\n");
 
