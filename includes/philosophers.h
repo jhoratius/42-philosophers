@@ -47,17 +47,19 @@ typedef struct s_meal_table
 	unsigned long			start_time;
 	pthread_mutex_t			*forks;
 	pthread_mutex_t			print_lock;
-
+	pthread_mutex_t			emergency_call;
 }				t_meal_table;
 
 // routine
 	// philosophes
+	int				manage_forks(t_meal_table *table, t_philo *philo, int L_fork, int R_fork);
 	int				philosopher_is_eating(t_meal_table *table, t_philo *philo);
 	int				philosopher_is_sleeping(t_meal_table *table, t_philo *philo);
 	int				philosopher_is_thinking(t_meal_table *table, t_philo *philo);
 	bool			philosopher_is_dead(t_meal_table *table, t_philo *philo);
 	void			lock_and_print(t_meal_table *table, t_philo *philo, char *str);
 	int				one_philo_routine(t_meal_table *table, t_philo *philo);
+	int				eat_locks(t_meal_table *table,t_philo *philo, int fork_1, int fork_2);
 	unsigned long	get_time();
 
 // src

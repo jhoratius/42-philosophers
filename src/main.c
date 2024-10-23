@@ -35,9 +35,7 @@ int	main(int ac, char** av)
 	table.forks = malloc(table.n_philosophes * sizeof(pthread_mutex_t));
 	if (!table.forks)
 		return (free(table.philosophes), 1);
-	// pthread_mutex_init(&table.print_lock, NULL);
 	init_philosophes(&table);
-	
 	if (check_philo_died(&table) == 1)
 		printf("All philosophers are done eating !\n");
 	ft_free_struct(&table);
@@ -50,12 +48,14 @@ int	check_philo_died(t_meal_table *table)
 	int	i;
 
 	i = 0;
+	pthread_mutex_lock(&table->emergency_call);
 	while (i < table->n_philosophes)
 	{
 		if (table->philosophes[i].is_dead == true)
 			return (0);
 		i++;
 	}
+	pthread_mutex_unlock(&table->emergency_call);
 	return (1);
 }
 
@@ -76,6 +76,7 @@ int	init_philosophes(t_meal_table *table)
 		pthread_mutex_init(&table->forks[i], NULL);
 	}
 	pthread_mutex_init(&table->print_lock, NULL);
+	pthread_mutex_init(&table->emergency_call, NULL);
 	table->start_time = get_time();
 	i = -1;
 	while (++i < table->n_philosophes)

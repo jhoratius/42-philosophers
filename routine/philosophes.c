@@ -37,34 +37,74 @@ int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
 		philo->time_to_eat = get_time();
 	if (L_fork < 0 || L_fork >= table->n_philosophes
 		|| R_fork < 0 || R_fork >= table->n_philosophes)
-			return (lock_and_print(table, philo, "err: Fork ID out of bounds"), 1);
+			return (lock_and_print(table, philo, "err: Fork out of bounds"), 1);
+	// pthread_mutex_lock(&table->print_lock);
+	// printf("%zu %d time to eat: %lu\n", get_time() - table->start_time, philo->id, get_time() - philo->time_to_eat);
+	// pthread_mutex_unlock(&table->print_lock);
 
-	//pthread_mutex_lock(&table->print_lock);
-	//printf("%zu %d time to eat: %lu\n", get_time() - table->start_time, philo->id, get_time() - philo->time_to_eat);
-	//pthread_mutex_unlock(&table->print_lock);
 	if (philo->nb_eat_times != 0
 		&& get_time() - philo->time_to_eat > table->die_limit)
-		return (philo->is_dead = true,
-			lock_and_print(table, philo, "died\n"), 1);
-
+	{
+		pthread_mutex_lock(&table->emergency_call);
+		philo->is_dead = true;
+		pthread_mutex_unlock(&table->emergency_call);
+		lock_and_print(table, philo, "died\n");
+		return (1);
+	}
 	if (check_philo_died(table) == 0)
 		return (1);
-	pthread_mutex_lock(&table->forks[L_fork]);
+	if (manage_forks(table, philo, L_fork, R_fork) == 1)
+		return (1);
+	
+	philo->nb_eat_times += 1;
+	// pthread_mutex_lock(&table->print_lock);
+	// printf("%zu %d time to eat: %lu\n", get_time() - table->start_time, philo->id, get_time() - philo->time_to_eat);
+	// pthread_mutex_unlock(&table->print_lock);
+	return (0);
+}
+
+int	manage_forks(t_meal_table *table, t_philo *philo, int L_fork, int R_fork)
+{
+	if (L_fork < R_fork)
+	{
+		if (eat_locks(table, philo, L_fork, R_fork))
+			return (1);
+	}
+	else
+	{
+		if (eat_locks(table, philo, R_fork, L_fork))
+			return (1);
+	}
+	return (0);
+}
+
+int	eat_locks(t_meal_table *table,t_philo *philo, int fork_1, int fork_2)
+{
+	pthread_mutex_lock(&table->forks[fork_1]);
+	if (check_philo_died(table) == 0)
+		return (pthread_mutex_unlock(&table->forks[fork_1]), 1);
 	lock_and_print(table, philo, "has taken a fork\n");
+	pthread_mutex_lock(&table->forks[fork_2]);
 
 	if (check_philo_died(table) == 0)
-		return (1);
-	pthread_mutex_lock(&table->forks[R_fork]);
+		return (pthread_mutex_unlock(&table->forks[fork_1]),
+			pthread_mutex_unlock(&table->forks[fork_2]), 1);
 	lock_and_print(table, philo, "has taken a fork\n");
-
 	lock_and_print(table, philo, "is eating\n");
 	usleep(table->eat_limit * 1000);
+	if (philo->nb_eat_times != 0 && get_time() - philo->time_to_eat > table->die_limit)
+	{
+		pthread_mutex_unlock(&table->forks[fork_1]);
+		pthread_mutex_unlock(&table->forks[fork_2]);
+		pthread_mutex_lock(&table->emergency_call);
+		philo->is_dead = true;
+		pthread_mutex_unlock(&table->emergency_call);
+		return (lock_and_print(table, philo, "died\n"), 1);
+	}
+	lock_and_print(table, philo, "has eaten\n");
 	philo->time_to_eat = get_time();
-	
-	pthread_mutex_unlock(&table->forks[L_fork]);
-	pthread_mutex_unlock(&table->forks[R_fork]);
-
-	philo->nb_eat_times += 1;
+	pthread_mutex_unlock(&table->forks[fork_1]);
+	pthread_mutex_unlock(&table->forks[fork_2]);
 	return (0);
 }
 
@@ -86,6 +126,7 @@ int	philosopher_is_sleeping(t_meal_table *table, t_philo *philo)
 		return (1);
 	lock_and_print(table, philo, "is sleeping\n");
 	usleep(table->sleep_limit * 1000);
+	lock_and_print(table, philo, "is awake\n");
 	return (0);
 }
 
@@ -131,14 +172,16 @@ int	one_philo_routine(t_meal_table *table, t_philo *philo)
 	pthread_mutex_unlock(&table->forks[philo->id - 1]);
 	while(1)
 	{
-		fprintf(stderr, "gettime - time to eat:%lu\n", get_time() - table->start_time);
-		if (get_time() - philo->time_to_eat > table->die_limit)
+		philo->time_to_eat = get_time();
+		if (philo->time_to_eat - table->start_time > table->die_limit)
 		{
+			pthread_mutex_lock(&table->emergency_call);
 			philo->is_dead = true;
+			pthread_mutex_unlock(&table->emergency_call);
 			lock_and_print(table, philo, "died\n");
 			return (1);
 		}
-		usleep(50);
-		// philo->time_to_eat = get_time();
+		// usleep(50);
+		philo->time_to_eat = get_time();
 	}
 }
