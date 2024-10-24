@@ -36,6 +36,15 @@ int	main(int ac, char** av)
 	if (!table.forks)
 		return (free(table.philosophes), 1);
 	init_philosophes(&table);
+	// pthread_mutex_lock(&table.print_lock);
+	// printf("qqqqqqqqqqqqqqqq\n");
+	// pthread_mutex_unlock(&table.print_lock);
+	while (1)
+	{
+		if (check_philo_died(&table) == 0)// add a condition for if 
+		// all philosophers ate each n times specified
+			break ;
+	}
 	if (check_philo_died(&table) == 1)
 		printf("All philosophers are done eating !\n");
 	ft_free_struct(&table);
@@ -44,7 +53,6 @@ int	main(int ac, char** av)
 
 int	check_philo_died(t_meal_table *table)
 {
-	(void)table;
 	int	i;
 
 	i = 0;
@@ -99,12 +107,15 @@ void	*ft_routine(t_philo *philo)
 	int	i;
 
 	i = 0;
+	// pthread_mutex_lock(&philo->table->print_lock);
+	// printf("philo %d : %d\n", philo->id, philo->id % 2);
+	// pthread_mutex_unlock(&philo->table->print_lock);
 	if (philo->id % 2 == 1)
 		usleep(philo->time_to_eat / 2);
 	while (1)
 	{
-		if (check_philo_died(philo->table) == 0)
-			break ;
+		//if (check_philo_died(philo->table) == 0)
+		//	break ;
 		if (philo->table->n_times_to_eat_each != -1
 			&& i > (philo->table->n_times_to_eat_each - 1))
 			break ;

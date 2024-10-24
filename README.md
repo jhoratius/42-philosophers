@@ -9,6 +9,8 @@
 
 new list
 - [x] corriger dans le cas ou j'ai un seul ou pas du tout de philosopher
-- [x] 
+(still has one lock held)
+- [x] corriger les hold locks
+- [x] implémenter le check de la mort dans le main, pas dans les threads
 
 #https://pagespeed.web.dev/?hl=fr
