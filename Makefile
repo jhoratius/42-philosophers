@@ -13,7 +13,8 @@ EXTS 	=	.c
 MAIN	= src/
 OBJDIR	= obj/
 
-FILES		=	free				\
+FILES		=	checks				\
+				free				\
 				main				\
 				parsing 			\
 				utils				\

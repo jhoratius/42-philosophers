@@ -45,13 +45,16 @@ typedef struct s_meal_table
 	unsigned long			die_limit;
 	int						n_times_to_eat_each;
 	unsigned long			start_time;
+	bool					stomachs_full;
+	bool					emergency_call;
 	pthread_mutex_t			*forks;
 	pthread_mutex_t			print_lock;
-	pthread_mutex_t			emergency_call;
+	pthread_mutex_t			someone_died;
 }				t_meal_table;
 
 // routine
 	// philosophes
+	int				ft_emergency_call(t_meal_table *table);
 	int				manage_forks(t_meal_table *table, t_philo *philo, int L_fork, int R_fork);
 	int				philosopher_is_eating(t_meal_table *table, t_philo *philo);
 	int				philosopher_is_sleeping(t_meal_table *table, t_philo *philo);
