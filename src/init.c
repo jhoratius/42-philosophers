@@ -45,7 +45,6 @@ int	init_philosophes(t_meal_table *table)
 	while (++i < table->n_philosophes)
 	{
 		table->philosophes[i].id = i + 1;
-		table->philosophes[i].is_dead = false;
 		table->philosophes[i].nb_eat_times = 0;
 		table->philosophes[i].table = table;
 		table->philosophes[i].time_to_eat = 0;

@@ -30,18 +30,12 @@ bool	ft_emergency_call(t_meal_table *table)
 	return (false);
 }
 
-int	check_philo_died(t_meal_table *table)
+int	check_emergency(t_meal_table *table)
 {
-	int	i;
-
-	i = 0;
 	pthread_mutex_lock(&table->someone_died);
-	while (i < table->n_philosophes)
-	{
-		if (table->philosophes[i].is_dead == true)
-			return (pthread_mutex_unlock(&table->someone_died), 0);
-		i++;
-	}
+	
+	if (table->emergency_call == true)
+		return (pthread_mutex_unlock(&table->someone_died), 0);
 	pthread_mutex_unlock(&table->someone_died);
 	return (1);
 }

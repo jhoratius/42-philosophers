@@ -56,19 +56,6 @@ int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
 	if (left_fork < 0 || left_fork >= table->n_philosophes
 		|| right_fork < 0 || right_fork >= table->n_philosophes)
 		return (lock_and_print(table, philo, "err: Fork out of bounds"), 1);
-	if (philo->nb_eat_times != 0
-		&& get_time() - philo->time_to_eat > table->die_limit)
-	{
-		pthread_mutex_lock(&table->someone_died);
-		philo->is_dead = true;
-		table->emergency_call = true;
-		pthread_mutex_unlock(&table->someone_died);
-		printf("emergency: %d\n", table->emergency_call);
-		// if (ft_emergency_call(table) == true)
-		// 	return (1);
-		lock_and_print(table, philo, "died\n");
-		return (1);
-	}
 	if (ft_emergency_call(table) == true)
 		return (1);
 	if (manage_forks(table, philo, left_fork, right_fork) == 1)
@@ -109,7 +96,7 @@ int	one_philo_routine(t_meal_table *table, t_philo *philo)
 		if (philo->time_to_eat - table->start_time > table->die_limit)
 		{
 			pthread_mutex_lock(&table->someone_died);
-			philo->is_dead = true;
+			table->emergency_call = true;	
 			pthread_mutex_unlock(&table->someone_died);
 			lock_and_print(table, philo, "died\n");
 			return (1);

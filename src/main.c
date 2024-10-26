@@ -37,7 +37,7 @@ int	main(int ac, char **av)
 
 int	end_of_simulation(t_meal_table *table)
 {
-	if (check_philo_died(table) == 0)
+	if (check_emergency(table) == 0)
 	{
 		pthread_mutex_lock(&table->someone_died);
 		table->emergency_call = true;

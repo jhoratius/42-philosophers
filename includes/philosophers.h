@@ -30,7 +30,6 @@ typedef struct s_philo
 {
 	int						id;
 	unsigned long			time_to_eat;
-	bool					is_dead;
 	int						nb_eat_times;
 	pthread_t				thread;
 	t_meal_table			*table;
@@ -53,41 +52,43 @@ typedef struct s_meal_table
 }				t_meal_table;
 
 // routine
-	// philosophes
+// philosophes
 void		*ft_routine(t_philo *philo);
 int			philosopher_is_eating(t_meal_table *table, t_philo *philo);
 int			philosopher_is_sleeping(t_meal_table *table, t_philo *philo);
 int			philosopher_is_thinking(t_meal_table *table, t_philo *philo);
 int			one_philo_routine(t_meal_table *table, t_philo *philo);
 
-	// philo_lunch
-int			eat_locks(t_meal_table *table, t_philo *philo, int fork_1, int fork_2);
+// philo_lunch
 int			manage_forks(t_meal_table *table, t_philo *philo, int l_fork, int r_fork);
+int			eat_locks(t_meal_table *table, t_philo *philo, int fork_1, int fork_2);
+void		found_philo_corpse(t_meal_table *table, int fork_1, int fork_2);
+void		unlock_forks(t_meal_table *table, int fork_1, int fork_2);
 
 // src
-	// checks
+// checks
 void		lock_and_print(t_meal_table *table, t_philo *philo, char *str);
 bool		ft_emergency_call(t_meal_table *table);
-int			check_philo_died(t_meal_table *table);
+int			check_emergency(t_meal_table *table);
 unsigned long	get_time(void);
 
-	// free
+// free
 void		ft_free_struct(t_meal_table *table);
 
-	// init
+// init
 int			ft_initialisation(t_meal_table *table, char **av);
 int			init_table(t_meal_table *table, char **av);
 int			init_philosophes(t_meal_table *table);
 bool		ft_append_infos_table(t_meal_table *table, char **av);
 
-	// main
+// main
 int			end_of_simulation(t_meal_table *table);
 
-	// parsing
+// parsing
 int			*parsing(int ac, char **av);
 int			ft_count_av(char **av);
 
-	// utils
+// utils
 int			ft_atoi(const char *nptr);
 bool		ft_atoi2(const char *nptr, int *n);
 long		ft_check_sign(char c, int *i);
