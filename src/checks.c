@@ -1,10 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   checks.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jhoratiu <jhoratiu@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/26 16:16:30 by jhoratiu          #+#    #+#             */
+/*   Updated: 2024/10/26 16:16:31 by jhoratiu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philosophers.h"
 
 void	lock_and_print(t_meal_table *table, t_philo *philo, char *str)
 {
 	if (ft_emergency_call(table) == false && ft_strcmp(str, "died\n") == 1)
 		return ;
-	
 	pthread_mutex_lock(&table->print_lock);
 	printf("%zu %d %s", get_time() - table->start_time, philo->id, str);
 	pthread_mutex_unlock(&table->print_lock);
@@ -35,7 +46,7 @@ int	check_philo_died(t_meal_table *table)
 	return (1);
 }
 
-unsigned long	get_time()
+unsigned long	get_time(void)
 {
 	struct timeval	curr_time;
 	unsigned long	time;

@@ -1,20 +1,32 @@
-# include "philosophers.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_lunch.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jhoratiu <jhoratiu@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/10/26 16:16:50 by jhoratiu          #+#    #+#             */
+/*   Updated: 2024/10/26 16:16:52 by jhoratiu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-int	eat_locks(t_meal_table *table,t_philo *philo, int fork_1, int fork_2)
+#include "philosophers.h"
+
+int	eat_locks(t_meal_table *table, t_philo *philo, int fork_1, int fork_2)
 {
 	pthread_mutex_lock(&table->forks[fork_1]);
 	if (ft_emergency_call(table) == true)
 		return (pthread_mutex_unlock(&table->forks[fork_1]), 1);
 	lock_and_print(table, philo, "has taken a fork\n");
 	pthread_mutex_lock(&table->forks[fork_2]);
-
 	if (ft_emergency_call(table) == true)
 		return (pthread_mutex_unlock(&table->forks[fork_1]),
 			pthread_mutex_unlock(&table->forks[fork_2]), 1);
 	lock_and_print(table, philo, "has taken a fork\n");
 	lock_and_print(table, philo, "is eating\n");
 	usleep(table->eat_limit * 1000);
-	if (philo->nb_eat_times != 0 && get_time() - philo->time_to_eat > table->die_limit)
+	if (philo->nb_eat_times != 0
+		&& get_time() - philo->time_to_eat > table->die_limit)
 	{
 		pthread_mutex_lock(&table->someone_died);
 		philo->is_dead = true;

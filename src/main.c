@@ -6,7 +6,7 @@
 /*   By: jhoratiu <jhoratiu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 18:30:02 by jhoratiu          #+#    #+#             */
-/*   Updated: 2024/08/27 19:01:54 by jhoratiu         ###   ########.fr       */
+/*   Updated: 2024/10/26 16:16:40 by jhoratiu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@
 	// 	return (1);
 	// free(tab);
 
-int	main(int ac, char** av)
+int	main(int ac, char **av)
 {
-	t_meal_table		table;
+	t_meal_table	table;
 
 	if (ac < 5)
 		return (printf("Wrong number of arguments!\nTry again!\n"), 1);
