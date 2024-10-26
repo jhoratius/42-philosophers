@@ -12,6 +12,34 @@
 
 # include "philosophers.h"
 
+void	*ft_routine(t_philo *philo)
+{
+	int	i;
+
+	i = 0;
+	if (philo->id % 2 == 1)
+		usleep(philo->time_to_eat / 2);
+	while (1)
+	{
+		if (philo->table->n_times_to_eat_each != -1
+			&& i > (philo->table->n_times_to_eat_each - 1))
+		{
+			pthread_mutex_lock(&philo->table->someone_died);
+			philo->table->stomachs_full = true;
+			pthread_mutex_unlock(&philo->table->someone_died);
+			break ;
+		}
+		if (philosopher_is_eating(philo->table, philo) == 1)
+			break ;
+		if (philosopher_is_sleeping(philo->table, philo) == 1)
+			break ;
+		if (philosopher_is_thinking(philo->table, philo) == 1)
+			break ;
+		i++;
+	}
+	return (NULL);
+}
+
 int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
 {
 	int		L_fork;
@@ -39,7 +67,7 @@ int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
 		lock_and_print(table, philo, "died\n");
 		return (1);
 	}
-	if (ft_emergency_call(table) == 1)
+	if (ft_emergency_call(table) == true)
 		return (1);
 	if (manage_forks(table, philo, L_fork, R_fork) == 1)
 		return (1);
@@ -47,56 +75,11 @@ int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
 	return (0);
 }
 
-int	manage_forks(t_meal_table *table, t_philo *philo, int L_fork, int R_fork)
-{
-	if (L_fork < R_fork)
-	{
-		if (eat_locks(table, philo, L_fork, R_fork))
-			return (1);
-	}
-	else
-	{
-		if (eat_locks(table, philo, R_fork, L_fork))
-			return (1);
-	}
-	return (0);
-}
-
-int	eat_locks(t_meal_table *table,t_philo *philo, int fork_1, int fork_2)
-{
-	pthread_mutex_lock(&table->forks[fork_1]);
-	if (ft_emergency_call(table) == 1)
-		return (pthread_mutex_unlock(&table->forks[fork_1]), 1);
-	lock_and_print(table, philo, "has taken a fork\n");
-	pthread_mutex_lock(&table->forks[fork_2]);
-
-	if (ft_emergency_call(table) == 1)
-		return (pthread_mutex_unlock(&table->forks[fork_1]),
-			pthread_mutex_unlock(&table->forks[fork_2]), 1);
-	lock_and_print(table, philo, "has taken a fork\n");
-	lock_and_print(table, philo, "is eating\n");
-	usleep(table->eat_limit * 1000);
-	if (philo->nb_eat_times != 0 && get_time() - philo->time_to_eat > table->die_limit)
-	{
-		pthread_mutex_lock(&table->someone_died);
-		philo->is_dead = true;
-		pthread_mutex_unlock(&table->someone_died);
-		pthread_mutex_unlock(&table->forks[fork_1]);
-		pthread_mutex_unlock(&table->forks[fork_2]);
-		return (lock_and_print(table, philo, "died\n"), 1);
-	}
-	//lock_and_print(table, philo, "has eaten\n");
-	philo->time_to_eat = get_time();
-	pthread_mutex_unlock(&table->forks[fork_1]);
-	pthread_mutex_unlock(&table->forks[fork_2]);
-	return (0);
-}
-
 int	philosopher_is_sleeping(t_meal_table *table, t_philo *philo)
 {
 	if (!table || !philo || !philo->id)
 		return (1);
-	if (ft_emergency_call(table) == 1)
+	if (ft_emergency_call(table) == true)
 		return (1);
 	lock_and_print(table, philo, "is sleeping\n");
 	usleep(table->sleep_limit * 1000);
@@ -108,7 +91,7 @@ int	philosopher_is_thinking(t_meal_table *table, t_philo *philo)
 	if (!table || !philo || !philo->id)
 		return (1);
 
-	if (ft_emergency_call(table) == 1)
+	if (ft_emergency_call(table) == true)
 		return (1);
 	lock_and_print(table, philo, "is thinking\n");
 	return (0);
