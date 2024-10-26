@@ -47,7 +47,7 @@ int	init_philosophes(t_meal_table *table)
 		table->philosophes[i].id = i + 1;
 		table->philosophes[i].nb_eat_times = 0;
 		table->philosophes[i].table = table;
-		table->philosophes[i].last_meal = 0;
+		table->philosophes[i].last_meal = get_time();
 		pthread_mutex_init(&table->forks[i], NULL);
 	}
 	pthread_mutex_init(&table->print_lock, NULL);

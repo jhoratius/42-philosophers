@@ -32,10 +32,26 @@ bool	ft_emergency_call(t_meal_table *table)
 
 int	check_emergency(t_meal_table *table)
 {
+	int	i;
+
+	i = -1;
 	pthread_mutex_lock(&table->someone_died);
-	
 	if (table->emergency_call == true)
 		return (pthread_mutex_unlock(&table->someone_died), 0);
+	while (++i < table->n_philosophes)
+	{
+		//printf("last meal : %zu\n", get_time() - table->philosophes[i].last_meal);
+		if (get_time() - table->philosophes[i].last_meal > table->die_limit)
+		{
+			table->emergency_call = true;
+			pthread_mutex_lock(&table->print_lock);
+			printf("%zu %d %s", get_time() - table->start_time,
+				table->philosophes[i].id, "died\n");
+			pthread_mutex_unlock(&table->print_lock);
+			//lock_and_print(table, &table->philosophes[i], "died\n");
+			return (pthread_mutex_unlock(&table->someone_died), 0);
+		}
+	}
 	pthread_mutex_unlock(&table->someone_died);
 	return (1);
 }

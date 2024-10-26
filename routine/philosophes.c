@@ -53,8 +53,10 @@ int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
 		return (one_philo_routine(table, philo));
 	left_fork = philo->id - 1;
 	right_fork = (philo->id) % table->n_philosophes;
+	pthread_mutex_lock(&table->someone_died);
 	if (philo->last_meal == 0)
 		philo->last_meal = get_time();
+	pthread_mutex_unlock(&table->someone_died);
 	if (left_fork < 0 || left_fork >= table->n_philosophes
 		|| right_fork < 0 || right_fork >= table->n_philosophes)
 		return (lock_and_print(table, philo, "err: Fork out of bounds"), 1);
@@ -98,7 +100,7 @@ int	one_philo_routine(t_meal_table *table, t_philo *philo)
 		if (philo->last_meal - table->start_time > table->die_limit)
 		{
 			pthread_mutex_lock(&table->someone_died);
-			table->emergency_call = true;	
+			table->emergency_call = true;
 			pthread_mutex_unlock(&table->someone_died);
 			lock_and_print(table, philo, "died\n");
 			return (1);

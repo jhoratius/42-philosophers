@@ -24,6 +24,7 @@ int	main(int ac, char **av)
 	{
 		if (end_of_simulation(&table) == 1)
 			break ;
+		usleep(900);
 	}
 	i = -1;
 	while (++i < table.n_philosophes)
@@ -36,12 +37,7 @@ int	main(int ac, char **av)
 int	end_of_simulation(t_meal_table *table)
 {
 	if (check_emergency(table) == 0)
-	{
-		pthread_mutex_lock(&table->someone_died);
-		table->emergency_call = true;
-		pthread_mutex_unlock(&table->someone_died);
 		return (1);
-	}
 	pthread_mutex_lock(&table->someone_died);
 	if (table->stomachs_full == true)
 	{
