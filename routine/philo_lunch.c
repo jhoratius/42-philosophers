@@ -39,17 +39,20 @@ int	eat_locks(t_meal_table *table, t_philo *philo, int fork_1, int fork_2)
 		return (unlock_forks(table, fork_1, fork_2), 1);
 	lock_and_print(table, philo, "has taken a fork\n");
 
-	lock_and_print(table, philo, "is eating\n");
-	usleep(table->eat_limit * 1000);
+	// pthread_mutex_lock(&table->print_lock);
+	// printf("%zu %d time to eat :%lu\n", get_time() - table->start_time, philo->id, get_time() - philo->last_meal);
+	// pthread_mutex_unlock(&table->print_lock);
 	if (philo->nb_eat_times != 0
-		&& get_time() - philo->time_to_eat > table->die_limit)
+		&& get_time() - philo->last_meal > table->die_limit)
 	{
 		if (ft_emergency_call(table) == true)
 			return (unlock_forks(table, fork_1, fork_2), 1);
 		found_philo_corpse(table, fork_1, fork_2);
 		return (lock_and_print(table, philo, "died\n"), 1);
 	}
-	philo->time_to_eat = get_time();
+	lock_and_print(table, philo, "is eating\n");
+	philo->last_meal = get_time();
+	usleep(table->eat_limit * 1000);
 	unlock_forks(table, fork_1, fork_2);
 	return (0);
 }

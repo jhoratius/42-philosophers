@@ -29,7 +29,7 @@ typedef struct s_meal_table	t_meal_table;
 typedef struct s_philo
 {
 	int						id;
-	unsigned long			time_to_eat;
+	unsigned long			last_meal;
 	int						nb_eat_times;
 	pthread_t				thread;
 	t_meal_table			*table;
@@ -46,6 +46,7 @@ typedef struct s_meal_table
 	unsigned long			start_time;
 	bool					stomachs_full;
 	bool					emergency_call;
+	pthread_mutex_t			start;
 	pthread_mutex_t			*forks;
 	pthread_mutex_t			print_lock;
 	pthread_mutex_t			someone_died;
