@@ -8,9 +8,9 @@
 - [✓] put routine pointer to philosophers
 
 new list
-- [x] corriger dans le cas ou j'ai un seul ou pas du tout de philosopher
-(still has one lock held)
-- [x] corriger les hold locks
-- [x] implémenter le check de la mort dans le main, pas dans les threads
+- [✓] corriger dans le cas ou j'ai un seul ou pas du tout de philosopher
+- [✓] corriger les hold locks
+- [x] initialisation des threads -> boucle infinie : check la mort repas -> join threads -> end simulation
+- [x] lancer tous les philos, une fois que tous les threads sont inities avec un mutex
 
 #https://pagespeed.web.dev/?hl=fr

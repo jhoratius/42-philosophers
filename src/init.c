@@ -47,25 +47,24 @@ int	init_philosophes(t_table *table)
 		table->philosophes[i].id = i + 1;
 		table->philosophes[i].nb_eat_times = 0;
 		table->philosophes[i].table = table;
-		table->philosophes[i].time_to_eat = 0;
+		table->philosophes[i].last_meal = get_time();
 		pthread_mutex_init(&table->forks[i], NULL);
 	}
 	pthread_mutex_init(&table->print_lock, NULL);
 	pthread_mutex_init(&table->someone_died, NULL);
-	table->start_time = get_time();
+	pthread_mutex_init(&table->start, NULL);
 	i = -1;
+	pthread_mutex_lock(&table->start);
 	while (++i < table->n_philosophes)
 	{
 		if (pthread_create(&table->philosophes[i].thread, NULL,
 				(void *)ft_routine, &table->philosophes[i]) != 0)
 			return (printf("failed to create\n"), 1);
 	}
-	i = -1;
-	while (++i < table->n_philosophes)
-		if (pthread_join(table->philosophes[i].thread, NULL) != 0)
-			return (printf("failed to join\n"), 1);
-	free(table->philosophes);
-	free(table->forks);
+	table->start_time = get_time();
+	pthread_mutex_unlock(&table->start);
+	// free(table->philosophes);
+	// free(table->forks);
 	return (0);
 }
 
