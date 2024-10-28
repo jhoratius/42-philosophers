@@ -12,7 +12,7 @@
 
 #include "../includes/philosophers.h"
 
-void	ft_free_struct(t_meal_table *table)
+void	ft_free_struct(t_table *table)
 {
 	(void)table;
 	return ;

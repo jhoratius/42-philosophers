@@ -21,7 +21,7 @@
 
 int	main(int ac, char **av)
 {
-	t_meal_table	table;
+	t_table	table;
 
 	if (ac < 5)
 		return (printf("Wrong number of arguments!\nTry again!\n"), 1);
@@ -35,7 +35,7 @@ int	main(int ac, char **av)
 	return (0);
 }
 
-int	end_of_simulation(t_meal_table *table)
+int	end_of_simulation(t_table *table)
 {
 	if (check_emergency(table) == 0)
 	{

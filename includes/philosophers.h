@@ -24,7 +24,7 @@
 # include <sys/wait.h>
 # include <sys/time.h>
 
-typedef struct s_meal_table	t_meal_table;
+typedef struct s_meal_table	t_table;
 
 typedef struct s_philo
 {
@@ -32,7 +32,7 @@ typedef struct s_philo
 	unsigned long			time_to_eat;
 	int						nb_eat_times;
 	pthread_t				thread;
-	t_meal_table			*table;
+	t_table					*table;
 }				t_philo;
 
 typedef struct s_meal_table
@@ -49,40 +49,43 @@ typedef struct s_meal_table
 	pthread_mutex_t			*forks;
 	pthread_mutex_t			print_lock;
 	pthread_mutex_t			someone_died;
-}				t_meal_table;
+}				t_table;
 
 // routine
 // philosophes
 void		*ft_routine(t_philo *philo);
-int			philosopher_is_eating(t_meal_table *table, t_philo *philo);
-int			philosopher_is_sleeping(t_meal_table *table, t_philo *philo);
-int			philosopher_is_thinking(t_meal_table *table, t_philo *philo);
-int			one_philo_routine(t_meal_table *table, t_philo *philo);
+int			philosopher_is_eating(t_table *table, t_philo *philo);
+int			philosopher_is_sleeping(t_table *table, t_philo *philo);
+int			philosopher_is_thinking(t_table *table, t_philo *philo);
+int			one_philo_routine(t_table *table, t_philo *philo);
 
 // philo_lunch
-int			manage_forks(t_meal_table *table, t_philo *philo, int l_fork, int r_fork);
-int			eat_locks(t_meal_table *table, t_philo *philo, int fork_1, int fork_2);
-void		found_philo_corpse(t_meal_table *table, int fork_1, int fork_2);
-void		unlock_forks(t_meal_table *table, int fork_1, int fork_2);
+int			manage_forks(t_table *table, t_philo *philo,
+				int l_fork, int r_fork);
+int			eat_locks(t_table *table, t_philo *philo, int fork_1, int fork_2);
+void		found_philo_corpse(t_table *table, int fork_1, int fork_2);
+int			usleep_alarm(t_table *table, t_philo *philo,
+				unsigned long time_to_wait);
+void		unlock_forks(t_table *table, int fork_1, int fork_2);
 
 // src
 // checks
-void		lock_and_print(t_meal_table *table, t_philo *philo, char *str);
-bool		ft_emergency_call(t_meal_table *table);
-int			check_emergency(t_meal_table *table);
+void		lock_and_print(t_table *table, t_philo *philo, char *str);
+bool		ft_emergency_call(t_table *table);
+int			check_emergency(t_table *table);
 unsigned long	get_time(void);
 
 // free
-void		ft_free_struct(t_meal_table *table);
+void		ft_free_struct(t_table *table);
 
 // init
-int			ft_initialisation(t_meal_table *table, char **av);
-int			init_table(t_meal_table *table, char **av);
-int			init_philosophes(t_meal_table *table);
-bool		ft_append_infos_table(t_meal_table *table, char **av);
+int			ft_initialisation(t_table *table, char **av);
+int			init_table(t_table *table, char **av);
+int			init_philosophes(t_table *table);
+bool		ft_append_infos_table(t_table *table, char **av);
 
 // main
-int			end_of_simulation(t_meal_table *table);
+int			end_of_simulation(t_table *table);
 
 // parsing
 int			*parsing(int ac, char **av);

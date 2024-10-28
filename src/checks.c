@@ -12,7 +12,7 @@
 
 #include "philosophers.h"
 
-void	lock_and_print(t_meal_table *table, t_philo *philo, char *str)
+void	lock_and_print(t_table *table, t_philo *philo, char *str)
 {
 	if (ft_emergency_call(table) == false && ft_strcmp(str, "died\n") == 1)
 		return ;
@@ -21,7 +21,7 @@ void	lock_and_print(t_meal_table *table, t_philo *philo, char *str)
 	pthread_mutex_unlock(&table->print_lock);
 }
 
-bool	ft_emergency_call(t_meal_table *table)
+bool	ft_emergency_call(t_table *table)
 {
 	pthread_mutex_lock(&table->someone_died);
 	if (table->emergency_call == true)
@@ -30,10 +30,9 @@ bool	ft_emergency_call(t_meal_table *table)
 	return (false);
 }
 
-int	check_emergency(t_meal_table *table)
+int	check_emergency(t_table *table)
 {
 	pthread_mutex_lock(&table->someone_died);
-	
 	if (table->emergency_call == true)
 		return (pthread_mutex_unlock(&table->someone_died), 0);
 	pthread_mutex_unlock(&table->someone_died);

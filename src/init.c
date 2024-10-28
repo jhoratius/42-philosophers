@@ -12,7 +12,7 @@
 
 #include "philosophers.h"
 
-int	ft_initialisation(t_meal_table *table, char **av)
+int	ft_initialisation(t_table *table, char **av)
 {
 	if (init_table(table, av) == 1)
 		return (1);
@@ -21,9 +21,9 @@ int	ft_initialisation(t_meal_table *table, char **av)
 	return (0);
 }
 
-int	init_table(t_meal_table *table, char **av)
+int	init_table(t_table *table, char **av)
 {
-	*table = (t_meal_table){0};
+	*table = (t_table){0};
 	if (ft_append_infos_table(table, av) == false)
 		return (1);
 	table->philosophes = malloc(table->n_philosophes * sizeof(t_philo));
@@ -35,7 +35,7 @@ int	init_table(t_meal_table *table, char **av)
 	return (0);
 }
 
-int	init_philosophes(t_meal_table *table)
+int	init_philosophes(t_table *table)
 {
 	int	i;
 
@@ -69,7 +69,7 @@ int	init_philosophes(t_meal_table *table)
 	return (0);
 }
 
-bool	ft_append_infos_table(t_meal_table *table, char **av)
+bool	ft_append_infos_table(t_table *table, char **av)
 {
 	table->n_philosophes = ft_atoi(av[1]);
 	if (table->n_philosophes == 0)

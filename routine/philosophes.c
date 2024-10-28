@@ -17,7 +17,7 @@ void	*ft_routine(t_philo *philo)
 	int	i;
 
 	i = 0;
-	if (philo->id % 2 == 1)
+	if (philo->id % 2 == 0)
 		usleep(philo->time_to_eat / 2);
 	while (1)
 	{
@@ -40,7 +40,7 @@ void	*ft_routine(t_philo *philo)
 	return (NULL);
 }
 
-int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
+int	philosopher_is_eating(t_table *table, t_philo *philo)
 {
 	int	left_fork;
 	int	right_fork;
@@ -64,7 +64,7 @@ int	philosopher_is_eating(t_meal_table *table, t_philo *philo)
 	return (0);
 }
 
-int	philosopher_is_sleeping(t_meal_table *table, t_philo *philo)
+int	philosopher_is_sleeping(t_table *table, t_philo *philo)
 {
 	if (!table || !philo || !philo->id)
 		return (1);
@@ -75,17 +75,19 @@ int	philosopher_is_sleeping(t_meal_table *table, t_philo *philo)
 	return (0);
 }
 
-int	philosopher_is_thinking(t_meal_table *table, t_philo *philo)
+int	philosopher_is_thinking(t_table *table, t_philo *philo)
 {
 	if (!table || !philo || !philo->id)
 		return (1);
 	if (ft_emergency_call(table) == true)
 		return (1);
 	lock_and_print(table, philo, "is thinking\n");
+	if (table->n_philosophes % 2 == 1)
+		usleep((table->eat_limit / 2) * 1000);
 	return (0);
 }
 
-int	one_philo_routine(t_meal_table *table, t_philo *philo)
+int	one_philo_routine(t_table *table, t_philo *philo)
 {
 	pthread_mutex_lock(&table->forks[philo->id - 1]);
 	lock_and_print(table, philo, "has taken a fork\n");
@@ -96,7 +98,7 @@ int	one_philo_routine(t_meal_table *table, t_philo *philo)
 		if (philo->time_to_eat - table->start_time > table->die_limit)
 		{
 			pthread_mutex_lock(&table->someone_died);
-			table->emergency_call = true;	
+			table->emergency_call = true;
 			pthread_mutex_unlock(&table->someone_died);
 			lock_and_print(table, philo, "died\n");
 			return (1);
