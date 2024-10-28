@@ -15,6 +15,7 @@
 int	main(int ac, char **av)
 {
 	t_table	table;
+	int		i;
 
 	if (ac < 5)
 		return (printf("Wrong number of arguments!\nTry again!\n"), 1);

@@ -16,10 +16,22 @@ void	lock_and_print(t_table *table, t_philo *philo, char *str)
 {
 	if (ft_emergency_call(table) == false && ft_strcmp(str, "died\n") == 1)
 		return ;
-	pthread_mutex_lock(&table->print_lock);
+	while (1)
+	{
+		pthread_mutex_lock(&table->print_lock);
+		if (!table->print)
+			break;
+		pthread_mutex_unlock(&table->print_lock);
+		usleep(10);
+	}
+	table->print = 1;
+	pthread_mutex_unlock(&table->print_lock);
 	printf("%zu %d %s", get_time() - table->start_time, philo->id, str);
+	pthread_mutex_lock(&table->print_lock);
+	table->print = 0;
 	pthread_mutex_unlock(&table->print_lock);
 }
+
 
 bool	ft_emergency_call(t_table *table)
 {
@@ -41,8 +53,10 @@ int	check_emergency(t_table *table)
 	while (++i < table->n_philosophes)
 	{
 		//printf("last meal : %zu\n", get_time() - table->philosophes[i].last_meal);
+		pthread_mutex_lock(&table->last_meal);
 		if (get_time() - table->philosophes[i].last_meal > table->die_limit)
 		{
+			pthread_mutex_unlock(&table->last_meal);
 			table->emergency_call = true;
 			pthread_mutex_lock(&table->print_lock);
 			printf("%zu %d %s", get_time() - table->start_time,
@@ -51,6 +65,7 @@ int	check_emergency(t_table *table)
 			//lock_and_print(table, &table->philosophes[i], "died\n");
 			return (pthread_mutex_unlock(&table->someone_died), 0);
 		}
+		pthread_mutex_unlock(&table->last_meal);
 	}
 	pthread_mutex_unlock(&table->someone_died);
 	return (1);

@@ -20,7 +20,7 @@ void	*ft_routine(t_philo *philo)
 	pthread_mutex_lock(&philo->table->start);
 	pthread_mutex_unlock(&philo->table->start);
 	if (philo->id % 2 == 0)
-		usleep(philo->time_to_eat / 2);
+		usleep(philo->table->eat_limit / 2);
 	while (1)
 	{
 		if (philo->table->n_times_to_eat_each != -1
@@ -53,10 +53,10 @@ int	philosopher_is_eating(t_table *table, t_philo *philo)
 		return (one_philo_routine(table, philo));
 	left_fork = philo->id - 1;
 	right_fork = (philo->id) % table->n_philosophes;
-	pthread_mutex_lock(&table->someone_died);
+	pthread_mutex_lock(&table->last_meal);
 	if (philo->last_meal == 0)
 		philo->last_meal = get_time();
-	pthread_mutex_unlock(&table->someone_died);
+	pthread_mutex_unlock(&table->last_meal);
 	if (left_fork < 0 || left_fork >= table->n_philosophes
 		|| right_fork < 0 || right_fork >= table->n_philosophes)
 		return (lock_and_print(table, philo, "err: Fork out of bounds"), 1);
@@ -86,8 +86,10 @@ int	philosopher_is_thinking(t_table *table, t_philo *philo)
 	if (ft_emergency_call(table) == true)
 		return (1);
 	lock_and_print(table, philo, "is thinking\n");
-	if (table->n_philosophes % 2 == 1)
-		usleep((table->eat_limit / 2) * 1000);
+	// if (table->n_philosophes % 2 == 1)
+	if (table->sleep_limit < table->eat_limit
+		&& table->sleep_limit + table->eat_limit > table->die_limit)
+		usleep((table->eat_limit - table->sleep_limit));
 	return (0);
 }
 
@@ -96,6 +98,7 @@ int	one_philo_routine(t_table *table, t_philo *philo)
 	pthread_mutex_lock(&table->forks[philo->id - 1]);
 	lock_and_print(table, philo, "has taken a fork\n");
 	pthread_mutex_unlock(&table->forks[philo->id - 1]);
+	pthread_mutex_lock(&table->last_meal);
 	while (1)
 	{
 		philo->last_meal = get_time();
@@ -105,8 +108,9 @@ int	one_philo_routine(t_table *table, t_philo *philo)
 			table->emergency_call = true;
 			pthread_mutex_unlock(&table->someone_died);
 			lock_and_print(table, philo, "died\n");
-			return (1);
+			return (pthread_mutex_unlock(&table->last_meal), 1);
 		}
 	}
+	pthread_mutex_unlock(&table->last_meal);
 	return (0);
 }

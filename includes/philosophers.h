@@ -49,7 +49,10 @@ typedef struct s_meal_table
 	pthread_mutex_t			start;
 	pthread_mutex_t			*forks;
 	pthread_mutex_t			print_lock;
+	bool					print;
 	pthread_mutex_t			someone_died;
+	pthread_mutex_t			monitoring;
+	pthread_mutex_t			last_meal;
 }				t_table;
 
 // routine

@@ -29,31 +29,60 @@ int	manage_forks(t_table *table, t_philo *philo, int L_fork, int R_fork)
 
 int	eat_locks(t_table *table, t_philo *philo, int fork_1, int fork_2)
 {
+	// pthread_mutex_lock(&table->monitoring);
+	// while ((pthread_mutex_lock(&table->forks[fork_1])) != 0
+	// 	|| (pthread_mutex_lock(&table->forks[fork_2])) != 0)
+	// {
+	// 	if ((pthread_mutex_lock(&table->forks[fork_1])) == 0
+	// 	&& (pthread_mutex_lock(&table->forks[fork_2])) == 0)
+	// 	{
+	// 		pthread_mutex_lock(&table->forks[fork_1]);
+	// 		pthread_mutex_lock(&table->forks[fork_2]);
+	// 	}
+	// 	else
+	// 	{
+	// 		pthread_mutex_unlock(&table->monitoring);
+	// 		usleep(30);
+	// 		pthread_mutex_lock(&table->monitoring);
+	// 	}
+	// }
+	// pthread_mutex_unlock(&table->monitoring);
 	pthread_mutex_lock(&table->forks[fork_1]);
 	if (ft_emergency_call(table) == true)
 		return (pthread_mutex_unlock(&table->forks[fork_1]), 1);
 	lock_and_print(table, philo, "has taken a fork\n");
+
 	pthread_mutex_lock(&table->forks[fork_2]);
 	if (ft_emergency_call(table) == true)
 		return (unlock_forks(table, fork_1, fork_2), 1);
 	lock_and_print(table, philo, "has taken a fork\n");
-	// pthread_mutex_lock(&table->print_lock);
-	// printf("%zu %d last meal :%zu\n", get_time() - table->start_time, philo->id, get_time() - philo->time_to_eat);
-	// pthread_mutex_unlock(&table->print_lock);
-	// philo->time_to_eat = get_time();
+
+	if (ft_emergency_call(table) == true)
+		return (unlock_forks(table, fork_1, fork_2), 1);
+	// lock_and_print(table, philo, "has taken a fork\n");
+
+	pthread_mutex_lock(&table->print_lock);
+	printf("%zu %d last meal :%zu\n", get_time() - table->start_time, philo->id, get_time() - philo->last_meal);
+	pthread_mutex_unlock(&table->print_lock);
 	lock_and_print(table, philo, "is eating\n");
-	// usleep(table->eat_limit * 1000);
+	pthread_mutex_lock(&table->last_meal);
+	philo->last_meal = get_time();
+	pthread_mutex_unlock(&table->last_meal);
 	if (usleep_alarm(table, philo, table->eat_limit) == 1)
 		return (unlock_forks(table, fork_1, fork_2), 1);
+	pthread_mutex_lock(&table->last_meal);
 	if (philo->nb_eat_times != 0
-		&& get_time() - philo->time_to_eat > table->die_limit)
+		&& get_time() - philo->last_meal > table->die_limit)
 	{
+		pthread_mutex_unlock(&table->last_meal);
 		if (ft_emergency_call(table) == true)
 			return (unlock_forks(table, fork_1, fork_2), 1);
 		found_philo_corpse(table, fork_1, fork_2);
 		return (lock_and_print(table, philo, "died\n"), 1);
 	}
-	philo->time_to_eat = get_time();
+	pthread_mutex_unlock(&table->last_meal);
+	pthread_mutex_lock(&table->last_meal);
+	pthread_mutex_unlock(&table->last_meal);
 	unlock_forks(table, fork_1, fork_2);
 	return (0);
 }
@@ -68,9 +97,11 @@ int	usleep_alarm(t_table *table, t_philo *philo, unsigned long time_to_wait)
 	while (time_passed < time_end)
 	{
 		usleep(50);
+		pthread_mutex_lock(&table->last_meal);
 		if (philo->nb_eat_times != 0
-		&& get_time() - philo->time_to_eat > table->die_limit)
+		&& get_time() - philo->last_meal > table->die_limit)
 		{
+			pthread_mutex_unlock(&table->last_meal);
 			if (ft_emergency_call(table) == true)
 				return (1);
 			pthread_mutex_lock(&table->someone_died);
@@ -78,6 +109,7 @@ int	usleep_alarm(t_table *table, t_philo *philo, unsigned long time_to_wait)
 			pthread_mutex_unlock(&table->someone_died);
 			return (lock_and_print(table, philo, "died\n"), 1);
 		}
+		pthread_mutex_unlock(&table->last_meal);
 		time_passed = get_time();
 	}
 	return (0);
