@@ -32,16 +32,6 @@ void	lock_and_print(t_table *table, t_philo *philo, char *str)
 	pthread_mutex_unlock(&table->print_lock);
 }
 
-
-bool	ft_emergency_call(t_table *table)
-{
-	pthread_mutex_lock(&table->someone_died);
-	if (table->emergency_call == true)
-		return (pthread_mutex_unlock(&table->someone_died), true);
-	pthread_mutex_unlock(&table->someone_died);
-	return (false);
-}
-
 int	check_emergency(t_table *table)
 {
 	int	i;
@@ -71,13 +61,14 @@ int	check_emergency(t_table *table)
 	return (1);
 }
 
-unsigned long	get_time(void)
+int	check_stomachs_full(t_table *table)
 {
-	struct timeval	curr_time;
-	unsigned long	time;
-
-	time = 0;
-	gettimeofday(&curr_time, NULL);
-	time = curr_time.tv_sec * 1000 + curr_time.tv_usec / 1000;
-	return (time);
+	pthread_mutex_lock(&table->someone_died);
+	if (table->stomachs_full == true)
+	{
+		pthread_mutex_unlock(&table->someone_died);
+		return (0);
+	}
+	pthread_mutex_unlock(&table->someone_died);
+	return (1);
 }

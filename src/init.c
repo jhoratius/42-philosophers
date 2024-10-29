@@ -54,11 +54,11 @@ int	init_philosophes(t_table *table)
 	pthread_mutex_init(&table->start, NULL);
 	pthread_mutex_init(&table->monitoring, NULL);
 	pthread_mutex_init(&table->last_meal, NULL);
-	pthread_mutex_lock(&table->start);
 	i = -1;
 	while (++i < table->n_philosophes)
 		table->philosophes[i].last_meal = get_time();
 	i = -1;
+	pthread_mutex_lock(&table->start);
 	while (++i < table->n_philosophes)
 	{
 		if (pthread_create(&table->philosophes[i].thread, NULL,

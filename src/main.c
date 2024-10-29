@@ -38,14 +38,24 @@ int	end_of_simulation(t_table *table)
 {
 	if (check_emergency(table) == 0)
 		return (1);
-	pthread_mutex_lock(&table->someone_died);
-	if (table->stomachs_full == true)
+	if (check_stomachs_full(table) == 0)
 	{
+		pthread_mutex_lock(&table->print_lock);
 		printf("All philosophers are done eating !\n");
-		pthread_mutex_unlock(&table->someone_died);
+		pthread_mutex_unlock(&table->print_lock);
 		return (1);
 	}
-	pthread_mutex_unlock(&table->someone_died);
+	// pthread_mutex_lock(&table->someone_died);
+	// if (check_stomachs_full() == 0)
+	// 	return (1);
+	// if (table->stomachs_full == true)
+	// {
+	// 	printf("All philosophers are done eating !\n");
+	// 	pthread_mutex_unlock(&table->someone_died);
+	// 	return (1);
+	// }
+	// pthread_mutex_unlock(&table->someone_died);
+	usleep(10);
 	return (0);
 }
 

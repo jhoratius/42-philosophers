@@ -71,13 +71,13 @@ void		found_philo_corpse(t_table *table, int fork_1, int fork_2);
 int			usleep_alarm(t_table *table, t_philo *philo,
 				unsigned long time_to_wait);
 void		unlock_forks(t_table *table, int fork_1, int fork_2);
+int			lock_a_fork(t_table *table, t_philo *philo, int fork);
 
 // src
 // checks
 void		lock_and_print(t_table *table, t_philo *philo, char *str);
-bool		ft_emergency_call(t_table *table);
 int			check_emergency(t_table *table);
-unsigned long	get_time(void);
+int			check_stomachs_full(t_table *table);
 
 // free
 void		ft_free_struct(t_table *table);
@@ -95,10 +95,15 @@ int			end_of_simulation(t_table *table);
 int			*parsing(int ac, char **av);
 int			ft_count_av(char **av);
 
+// safe checks
+bool		ft_emergency_call(t_table *table);
+void		lock_last_meal(t_table *table, t_philo *philo);
+
 // utils
 int			ft_atoi(const char *nptr);
 bool		ft_atoi2(const char *nptr, int *n);
 long		ft_check_sign(char c, int *i);
 int			ft_strcmp(char *s1, char *s2);
+unsigned long	get_time(void);
 
 #endif

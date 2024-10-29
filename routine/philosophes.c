@@ -53,14 +53,14 @@ int	philosopher_is_eating(t_table *table, t_philo *philo)
 		return (one_philo_routine(table, philo));
 	left_fork = philo->id - 1;
 	right_fork = (philo->id) % table->n_philosophes;
-	pthread_mutex_lock(&table->last_meal);
-	if (philo->last_meal == 0)
-		philo->last_meal = get_time();
-	pthread_mutex_unlock(&table->last_meal);
+	// pthread_mutex_lock(&table->last_meal);
+	// if (philo->last_meal == 0)
+	// 	philo->last_meal = get_time();
+	// pthread_mutex_unlock(&table->last_meal);
 	if (left_fork < 0 || left_fork >= table->n_philosophes
 		|| right_fork < 0 || right_fork >= table->n_philosophes)
 		return (lock_and_print(table, philo, "err: Fork out of bounds"), 1);
-	if (ft_emergency_call(table) == true)
+	if (ft_emergency_call(table) == true || check_stomachs_full(table) == 0)
 		return (1);
 	if (manage_forks(table, philo, left_fork, right_fork) == 1)
 		return (1);
@@ -72,7 +72,7 @@ int	philosopher_is_sleeping(t_table *table, t_philo *philo)
 {
 	if (!table || !philo || !philo->id)
 		return (1);
-	if (ft_emergency_call(table) == true)
+	if (ft_emergency_call(table) == true || check_stomachs_full(table) == 0)
 		return (1);
 	lock_and_print(table, philo, "is sleeping\n");
 	usleep(table->sleep_limit * 1000);
@@ -83,13 +83,16 @@ int	philosopher_is_thinking(t_table *table, t_philo *philo)
 {
 	if (!table || !philo || !philo->id)
 		return (1);
-	if (ft_emergency_call(table) == true)
+	if (ft_emergency_call(table) == true || check_stomachs_full(table) == 0)
 		return (1);
 	lock_and_print(table, philo, "is thinking\n");
-	// if (table->n_philosophes % 2 == 1)
-	if (table->sleep_limit < table->eat_limit
-		&& table->sleep_limit + table->eat_limit > table->die_limit)
-		usleep((table->eat_limit - table->sleep_limit));
+	// printf("%zu %d sleepl + eatl:%zu\n", get_time() - table->start_time, philo->id, table->sleep_limit + table->eat_limit);
+	// printf("%zu %d die limit    :%zu\n", get_time() - table->start_time, philo->id, table->die_limit);
+	if (table->sleep_limit < table->eat_limit)
+		// && table->sleep_limit + table->eat_limit > table->die_limit)
+		// printf("%zu %d eatl - sleepl:%zu\n", get_time() - table->start_time, philo->id, table->eat_limit - table->sleep_limit);
+	usleep_alarm(table, philo, (table->eat_limit - table->sleep_limit) + (unsigned long)5);
+	// usleep_alarm(table, philo, 1);
 	return (0);
 }
 
@@ -104,11 +107,12 @@ int	one_philo_routine(t_table *table, t_philo *philo)
 		philo->last_meal = get_time();
 		if (philo->last_meal - table->start_time > table->die_limit)
 		{
+			pthread_mutex_unlock(&table->last_meal);
 			pthread_mutex_lock(&table->someone_died);
 			table->emergency_call = true;
 			pthread_mutex_unlock(&table->someone_died);
 			lock_and_print(table, philo, "died\n");
-			return (pthread_mutex_unlock(&table->last_meal), 1);
+			return (1);
 		}
 	}
 	pthread_mutex_unlock(&table->last_meal);

@@ -96,3 +96,14 @@ int	ft_strcmp(char *s1, char *s2)
 	}
 	return (0);
 }
+
+unsigned long	get_time(void)
+{
+	struct timeval	curr_time;
+	unsigned long	time;
+
+	time = 0;
+	gettimeofday(&curr_time, NULL);
+	time = curr_time.tv_sec * 1000 + curr_time.tv_usec / 1000;
+	return (time);
+}
