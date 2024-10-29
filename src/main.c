@@ -17,8 +17,10 @@ int	main(int ac, char **av)
 	t_table	table;
 	int		i;
 
-	if (ac < 5)
+	if (ac < 5 || ac > 6)
 		return (printf("Wrong number of arguments!\nTry again!\n"), 1);
+	if (parsing(ac, av) == false)
+		return (1);
 	ft_initialisation(&table, av);
 	while (1)
 	{

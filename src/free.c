@@ -15,5 +15,8 @@
 void	ft_free_struct(t_table *table)
 {
 	(void)table;
+
+	free(table->philosophes);
+	free(table->forks);
 	return ;
 }

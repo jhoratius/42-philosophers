@@ -92,7 +92,7 @@ bool		ft_append_infos_table(t_table *table, char **av);
 int			end_of_simulation(t_table *table);
 
 // parsing
-int			*parsing(int ac, char **av);
+bool		parsing(int ac, char **av);
 int			ft_count_av(char **av);
 
 // safe checks

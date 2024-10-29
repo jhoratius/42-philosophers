@@ -12,7 +12,7 @@
 
 #include "../includes/philosophers.h"
 
-int	*parsing(int ac, char **av)
+bool	parsing(int ac, char **av)
 {
 	int	i;
 	int	*tab;
@@ -20,14 +20,15 @@ int	*parsing(int ac, char **av)
 	i = 1;
 	tab = malloc((ac) * sizeof(int));
 	if (!tab)
-		return (NULL);
+		return (free(tab), false);
 	while (av[i])
 	{
 		if (ft_atoi2(av[i], &tab[i]) == false)
-			return (NULL);
+			return (free(tab), false);
 		i++;
 	}
-	return (tab);
+	free(tab);
+	return (true);
 }
 
 int	ft_count_av(char **av)

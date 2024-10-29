@@ -37,7 +37,7 @@ int	ft_atoi(const char *nptr)
 	return (n * signe);
 }
 
-bool	ft_atoi2(const char *nptr, int *n)
+bool	ft_atoi2(const char *str, int *n)
 {
 	int		i;
 	long	sign;
@@ -46,21 +46,21 @@ bool	ft_atoi2(const char *nptr, int *n)
 	i = 0;
 	sign = 1;
 	j = 0;
-	while ((nptr[i] >= 9 && nptr[i] <= 13) || nptr[i] == 32)
+	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
 		i++;
-	sign = ft_check_sign(nptr[i], &i);
+	sign = ft_check_sign(str[i], &i);
 	if (sign != 1 && sign != -1)
-		return (false);
-	while (nptr[i] && (nptr[i] >= 48 && nptr[i] <= 57))
+		return (printf("Error\n"), false);
+	while (str[i] && (str[i] >= 48 && str[i] <= 57))
 	{
-		if (((sign > 0 && (j * 10 + nptr[i] - 48) > INT_MAX))
-			|| ((sign < 0 && (j * 10 + nptr[i] - 48) * sign < INT_MIN)))
+		if (((sign > 0 && (j * 10 + str[i] - 48) > INT_MAX))
+			|| ((sign < 0 && (j * 10 + str[i] - 48) * sign < INT_MIN)))
 			return (write(2, "Error : Argument overflow\n", 27), false);
-		j = j * 10 + nptr[i] - 48;
+		j = j * 10 + str[i] - 48;
 		i += 1;
 	}
-	if (nptr[i] && (!(nptr[i] == '\0')))
-		return (write(2, "Error\n", 6), false);
+	if (str[i] && (!(str[i] == '\0')))
+		return (printf("Error\n"), false);
 	*n = j * sign;
 	return (true);
 }
