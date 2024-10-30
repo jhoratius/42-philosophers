@@ -20,7 +20,7 @@ void	lock_and_print(t_table *table, t_philo *philo, char *str)
 	{
 		pthread_mutex_lock(&table->print_lock);
 		if (!table->print)
-			break;
+			break ;
 		pthread_mutex_unlock(&table->print_lock);
 		usleep(10);
 	}
@@ -42,7 +42,6 @@ int	check_emergency(t_table *table)
 		return (pthread_mutex_unlock(&table->someone_died), 0);
 	while (++i < table->n_philosophes)
 	{
-		//printf("last meal : %zu\n", get_time() - table->philosophes[i].last_meal);
 		pthread_mutex_lock(&table->last_meal);
 		if (get_time() - table->philosophes[i].last_meal > table->die_limit)
 		{
@@ -52,7 +51,6 @@ int	check_emergency(t_table *table)
 			printf("%zu %d %s", get_time() - table->start_time,
 				table->philosophes[i].id, "died\n");
 			pthread_mutex_unlock(&table->print_lock);
-			//lock_and_print(table, &table->philosophes[i], "died\n");
 			return (pthread_mutex_unlock(&table->someone_died), 0);
 		}
 		pthread_mutex_unlock(&table->last_meal);
@@ -71,4 +69,12 @@ int	check_stomachs_full(t_table *table)
 	}
 	pthread_mutex_unlock(&table->someone_died);
 	return (1);
+}
+
+void	found_philo_corpse(t_table *table, int fork_1, int fork_2)
+{
+	pthread_mutex_lock(&table->someone_died);
+	table->emergency_call = true;
+	pthread_mutex_unlock(&table->someone_died);
+	unlock_forks(table, fork_1, fork_2);
 }

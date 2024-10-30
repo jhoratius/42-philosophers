@@ -57,53 +57,55 @@ typedef struct s_meal_table
 
 // routine
 // philosophes
-void		*ft_routine(t_philo *philo);
-int			philosopher_is_eating(t_table *table, t_philo *philo);
-int			philosopher_is_sleeping(t_table *table, t_philo *philo);
-int			philosopher_is_thinking(t_table *table, t_philo *philo);
-int			one_philo_routine(t_table *table, t_philo *philo);
+void			*ft_routine(t_philo *philo);
+int				philosopher_is_eating(t_table *table, t_philo *philo);
+int				philosopher_is_sleeping(t_table *table, t_philo *philo);
+int				philosopher_is_thinking(t_table *table, t_philo *philo);
+int				one_philo_routine(t_table *table, t_philo *philo);
 
 // philo_lunch
-int			manage_forks(t_table *table, t_philo *philo,
-				int l_fork, int r_fork);
-int			eat_locks(t_table *table, t_philo *philo, int fork_1, int fork_2);
-void		found_philo_corpse(t_table *table, int fork_1, int fork_2);
-int			usleep_alarm(t_table *table, t_philo *philo,
-				unsigned long time_to_wait);
-void		unlock_forks(t_table *table, int fork_1, int fork_2);
-int			lock_a_fork(t_table *table, t_philo *philo, int fork);
+int				manage_forks(t_table *table, t_philo *philo,
+					int l_fork, int r_fork);
+int				eat_locks(t_table *table, t_philo *philo,
+					int fork_1, int fork_2);
+void			found_philo_corpse(t_table *table, int fork_1, int fork_2);
+int				usleep_alarm(t_table *table, t_philo *philo,
+					unsigned long time_to_wait);
+void			unlock_forks(t_table *table, int fork_1, int fork_2);
+int				lock_a_fork(t_table *table, t_philo *philo, int fork);
 
 // src
 // checks
-void		lock_and_print(t_table *table, t_philo *philo, char *str);
-int			check_emergency(t_table *table);
-int			check_stomachs_full(t_table *table);
+void			lock_and_print(t_table *table, t_philo *philo, char *str);
+int				check_emergency(t_table *table);
+int				check_stomachs_full(t_table *table);
 
 // free
-void		ft_free_struct(t_table *table);
+void			ft_free_struct(t_table *table);
 
 // init
-int			ft_initialisation(t_table *table, char **av);
-int			init_table(t_table *table, char **av);
-int			init_philosophes(t_table *table);
-bool		ft_append_infos_table(t_table *table, char **av);
+int				ft_initialisation(t_table *table, char **av);
+int				alloc_table(t_table *table, char **av);
+void			init_table(t_table *table);
+int				init_philosophes(t_table *table);
+bool			ft_append_infos_table(t_table *table, char **av);
 
 // main
-int			end_of_simulation(t_table *table);
+int				end_of_simulation(t_table *table);
 
 // parsing
-bool		parsing(int ac, char **av);
-int			ft_count_av(char **av);
+bool			parsing(int ac, char **av);
+int				ft_count_av(char **av);
 
 // safe checks
-bool		ft_emergency_call(t_table *table);
-void		lock_last_meal(t_table *table, t_philo *philo);
+bool			ft_emergency_call(t_table *table);
+void			lock_last_meal(t_table *table, t_philo *philo);
 
 // utils
-int			ft_atoi(const char *nptr);
-bool		ft_atoi2(const char *nptr, int *n);
-long		ft_check_sign(char c, int *i);
-int			ft_strcmp(char *s1, char *s2);
+int				ft_atoi(const char *nptr);
+bool			ft_atoi2(const char *nptr, int *n);
+long			ft_check_sign(char c, int *i);
+int				ft_strcmp(char *s1, char *s2);
 unsigned long	get_time(void);
 
 #endif

@@ -14,14 +14,14 @@
 
 int	ft_initialisation(t_table *table, char **av)
 {
-	if (init_table(table, av) == 1)
+	if (alloc_table(table, av) == 1)
 		return (1);
 	if (init_philosophes(table) == 1)
 		return (1);
 	return (0);
 }
 
-int	init_table(t_table *table, char **av)
+int	alloc_table(t_table *table, char **av)
 {
 	*table = (t_table){0};
 	if (ft_append_infos_table(table, av) == false)
@@ -41,6 +41,26 @@ int	init_philosophes(t_table *table)
 
 	if (!table)
 		return (1);
+	init_table(table);
+	i = -1;
+	pthread_mutex_lock(&table->start);
+	while (++i < table->n_philosophes)
+	{
+		if (pthread_create(&table->philosophes[i].thread, NULL,
+				(void *)ft_routine, &table->philosophes[i]) != 0)
+			return (printf("failed to create\n"), 1);
+	}
+	table->start_time = get_time();
+	pthread_mutex_unlock(&table->start);
+	return (0);
+}
+
+void	init_table(t_table *table)
+{
+	int	i;
+
+	if (!table)
+		return ;
 	i = -1;
 	while (++i < table->n_philosophes)
 	{
@@ -57,17 +77,6 @@ int	init_philosophes(t_table *table)
 	i = -1;
 	while (++i < table->n_philosophes)
 		table->philosophes[i].last_meal = get_time();
-	i = -1;
-	pthread_mutex_lock(&table->start);
-	while (++i < table->n_philosophes)
-	{
-		if (pthread_create(&table->philosophes[i].thread, NULL,
-				(void *)ft_routine, &table->philosophes[i]) != 0)
-			return (printf("failed to create\n"), 1);
-	}
-	table->start_time = get_time();
-	pthread_mutex_unlock(&table->start);
-	return (0);
 }
 
 bool	ft_append_infos_table(t_table *table, char **av)

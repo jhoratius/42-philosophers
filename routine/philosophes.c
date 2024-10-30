@@ -29,17 +29,16 @@ void	*ft_routine(t_philo *philo)
 			pthread_mutex_lock(&philo->table->someone_died);
 			philo->table->stomachs_full = true;
 			pthread_mutex_unlock(&philo->table->someone_died);
-			break ;
+			return (NULL);
 		}
 		if (philosopher_is_eating(philo->table, philo) == 1)
-			break ;
+			return (NULL);
 		if (philosopher_is_sleeping(philo->table, philo) == 1)
-			break ;
+			return (NULL);
 		if (philosopher_is_thinking(philo->table, philo) == 1)
-			break ;
+			return (NULL);
 		i++;
 	}
-	return (NULL);
 }
 
 int	philosopher_is_eating(t_table *table, t_philo *philo)
@@ -53,10 +52,6 @@ int	philosopher_is_eating(t_table *table, t_philo *philo)
 		return (one_philo_routine(table, philo));
 	left_fork = philo->id - 1;
 	right_fork = (philo->id) % table->n_philosophes;
-	// pthread_mutex_lock(&table->last_meal);
-	// if (philo->last_meal == 0)
-	// 	philo->last_meal = get_time();
-	// pthread_mutex_unlock(&table->last_meal);
 	if (left_fork < 0 || left_fork >= table->n_philosophes
 		|| right_fork < 0 || right_fork >= table->n_philosophes)
 		return (lock_and_print(table, philo, "err: Fork out of bounds"), 1);
@@ -86,13 +81,9 @@ int	philosopher_is_thinking(t_table *table, t_philo *philo)
 	if (ft_emergency_call(table) == true || check_stomachs_full(table) == 0)
 		return (1);
 	lock_and_print(table, philo, "is thinking\n");
-	// printf("%zu %d sleepl + eatl:%zu\n", get_time() - table->start_time, philo->id, table->sleep_limit + table->eat_limit);
-	// printf("%zu %d die limit    :%zu\n", get_time() - table->start_time, philo->id, table->die_limit);
 	if (table->sleep_limit < table->eat_limit)
-		// && table->sleep_limit + table->eat_limit > table->die_limit)
-		// printf("%zu %d eatl - sleepl:%zu\n", get_time() - table->start_time, philo->id, table->eat_limit - table->sleep_limit);
-	usleep_alarm(table, philo, (table->eat_limit - table->sleep_limit) + (unsigned long)5);
-	// usleep_alarm(table, philo, 1);
+		usleep_alarm(table, philo, (table->eat_limit - table->sleep_limit)
+			+ (unsigned long)5);
 	return (0);
 }
 

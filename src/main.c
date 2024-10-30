@@ -47,23 +47,6 @@ int	end_of_simulation(t_table *table)
 		pthread_mutex_unlock(&table->print_lock);
 		return (1);
 	}
-	// pthread_mutex_lock(&table->someone_died);
-	// if (check_stomachs_full() == 0)
-	// 	return (1);
-	// if (table->stomachs_full == true)
-	// {
-	// 	printf("All philosophers are done eating !\n");
-	// 	pthread_mutex_unlock(&table->someone_died);
-	// 	return (1);
-	// }
-	// pthread_mutex_unlock(&table->someone_died);
 	usleep(10);
 	return (0);
 }
-
-// check if all the arguments are numbers
-// how am I going to use that tab ?
-// tab = parsing(ac, av);
-// if (!tab)
-// 	return (1);
-// free(tab);
