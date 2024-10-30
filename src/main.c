@@ -21,7 +21,8 @@ int	main(int ac, char **av)
 		return (printf("Wrong number of arguments!\nTry again!\n"), 1);
 	if (parsing(ac, av) == false)
 		return (1);
-	ft_initialisation(&table, av);
+	if (ft_initialisation(&table, av) == 1)
+		return (1);
 	while (1)
 	{
 		if (end_of_simulation(&table) == 1)

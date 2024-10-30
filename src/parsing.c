@@ -15,17 +15,22 @@
 bool	parsing(int ac, char **av)
 {
 	int	i;
+	int	j;
 	int	*tab;
 
 	i = 1;
-	tab = malloc((ac) * sizeof(int));
+	j = 0;
+	tab = malloc((ac - 1) * sizeof(int));
 	if (!tab)
 		return (free(tab), false);
 	while (av[i])
 	{
-		if (ft_atoi2(av[i], &tab[i]) == false)
+		if (ft_atoi2(av[i], &tab[j]) == false)
 			return (free(tab), false);
+		if (tab[j] <= 0)
+			return (free(tab), printf("Error\n"), false);
 		i++;
+		j++;
 	}
 	free(tab);
 	return (true);

@@ -55,7 +55,7 @@ bool	ft_atoi2(const char *str, int *n)
 	{
 		if (((sign > 0 && (j * 10 + str[i] - 48) > INT_MAX))
 			|| ((sign < 0 && (j * 10 + str[i] - 48) * sign < INT_MIN)))
-			return (write(2, "Error : Argument overflow\n", 27), false);
+			return (printf("Error : Argument overflow\n"), false);
 		j = j * 10 + str[i] - 48;
 		i += 1;
 	}
