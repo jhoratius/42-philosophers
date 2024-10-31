@@ -20,7 +20,9 @@ void	*ft_routine(t_philo *philo)
 	pthread_mutex_lock(&philo->table->start);
 	pthread_mutex_unlock(&philo->table->start);
 	if (philo->id % 2 == 0)
-		usleep(philo->table->eat_limit / 2);
+		usleep(philo->table->eat_limit);
+	// else if (philo->table->n_philosophes % 2 == 0 && philo->id % 2 == 1)
+	// 	usleep(philo->table->eat_limit);
 	while (1)
 	{
 		if (philo->table->n_times_to_eat_each != -1
@@ -81,7 +83,7 @@ int	philosopher_is_thinking(t_table *table, t_philo *philo)
 	if (ft_emergency_call(table) == true || check_stomachs_full(table) == 0)
 		return (1);
 	lock_and_print(table, philo, "is thinking\n");
-	if (table->sleep_limit < table->eat_limit)
+	if (table->sleep_limit <= table->eat_limit)
 		usleep_alarm(table, philo, (table->eat_limit - table->sleep_limit)
 			+ (unsigned long)5);
 	return (0);
