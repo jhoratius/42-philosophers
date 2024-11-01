@@ -19,12 +19,12 @@ int	manage_forks(t_table *table, t_philo *philo, int L_fork, int R_fork)
 {
 	if (L_fork < R_fork)
 	{
-		if (eat_locks(table, philo, L_fork, R_fork))
+		if (eat_locks(table, philo, L_fork, R_fork) == 1)
 			return (1);
 	}
 	else
 	{
-		if (eat_locks(table, philo, R_fork, L_fork))
+		if (eat_locks(table, philo, R_fork, L_fork) == 1)
 			return (1);
 	}
 	return (0);
@@ -75,7 +75,7 @@ int	usleep_alarm(t_table *table, t_philo *philo, unsigned long time_to_wait)
 	time_end = get_time() + time_to_wait;
 	while (time_passed < time_end)
 	{
-		usleep(50);
+		usleep(1);
 		pthread_mutex_lock(&table->last_meal);
 		if (philo->nb_eat_times != 0
 			&& get_time() - philo->last_meal > table->die_limit)

@@ -5,7 +5,7 @@ RESET = \033[0m
 NAME =		philo
 
 CC 			= cc
-CFLAGS 		= -Wall -Wextra -Werror -g3
+CFLAGS 		= -Wall -Wextra -Werror -g3 -o3
 DFLAGS		= -MMD -MP
 RM 			= rm -f
 EXTS 	=	.c
@@ -38,6 +38,14 @@ all: $(NAME)
 $(NAME): $(OBJS) includes/philosophers.h
 	$(CC) $(CFLAGS) $(DFLAGS) -pthread -Iincludes -o $(NAME) $(OBJS)
 	@echo "Done compiling."
+
+# a: $(NAME)
+# 	clear
+# 	./$(NAME) 200 800 200 200
+
+# v: $(NAME)
+# 	clear
+# 	$(HELLGRIND) ./$(NAME) 200 600 200 200 
 
 $(OBJDIR)%.o: %.c includes/philosophers.h
 	mkdir -p $(OBJDIR)

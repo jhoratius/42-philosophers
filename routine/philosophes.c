@@ -17,12 +17,8 @@ void	*ft_routine(t_philo *philo)
 	int	i;
 
 	i = 0;
-	pthread_mutex_lock(&philo->table->start);
-	pthread_mutex_unlock(&philo->table->start);
 	if (philo->id % 2 == 0)
 		usleep(philo->table->eat_limit);
-	// else if (philo->table->n_philosophes % 2 == 0 && philo->id % 2 == 1)
-	// 	usleep(philo->table->eat_limit);
 	while (1)
 	{
 		if (philo->table->n_times_to_eat_each != -1
@@ -59,7 +55,10 @@ int	philosopher_is_eating(t_table *table, t_philo *philo)
 		return (lock_and_print(table, philo, "err: Fork out of bounds"), 1);
 	if (ft_emergency_call(table) == true || check_stomachs_full(table) == 0)
 		return (1);
-	if (manage_forks(table, philo, left_fork, right_fork) == 1)
+	if (philo->id % 2 && manage_forks(table, philo, left_fork, right_fork) == 1)
+		return (1);
+	else if (!(philo->id % 2)
+		&& manage_forks(table, philo, right_fork, left_fork) == 1)
 		return (1);
 	philo->nb_eat_times += 1;
 	return (0);

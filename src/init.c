@@ -43,15 +43,13 @@ int	init_philosophes(t_table *table)
 		return (1);
 	init_table(table);
 	i = -1;
-	pthread_mutex_lock(&table->start);
+	table->start_time = get_time();
 	while (++i < table->n_philosophes)
 	{
 		if (pthread_create(&table->philosophes[i].thread, NULL,
 				(void *)ft_routine, &table->philosophes[i]) != 0)
 			return (printf("failed to create\n"), 1);
 	}
-	table->start_time = get_time();
-	pthread_mutex_unlock(&table->start);
 	return (0);
 }
 
